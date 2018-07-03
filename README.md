@@ -5,7 +5,11 @@ Il contient un script bash pour préparer le raspberry en, par example, installa
 <a href="https://wpilib.screenstepslive.com/s/currentCS/m/vision/l/682778-read-and-process-video-cameraserver-class">cscore</a>
 , opencv, ect... Il contient aussi un example complet de reconnaissance visuelle facilement adaptable grâce à une "pipeline" générée par <a href="https://wpilib.screenstepslive.com/s/4485/m/24194/l/463566-introduction-to-grip"> GRIP</a>.
 
-Le contenu de ce repository provient du <a href="https://pdocs.kauailabs.com/vmx-rtk/">VMX Robotics Toolkit</a> (VMX RTK) avec quelques modifications, le script original peut être trouvé <a href="https://gist.github.com/kauailabs/53e7ff136e6e7d3f883f77576d70fbcd"> là </a> et l'example <a href="https://github.com/kauailabs/vmx-rtk-examples"> ici</a>.
+Le contenu de ce repository provient du <a href="https://pdocs.kauailabs.com/vmx-rtk/">VMX Robotics Toolkit</a> (VMX RTK) avec quelques modifications, le script original peut être trouvé <a href="https://gist.github.com/kauailabs/53e7ff136e6e7d3f883f77576d70fbcd"> là </a> et le code <a href="https://github.com/kauailabs/vmx-rtk-examples"> ici</a>.
+
+
+Le script peut être executé par n'importe quel Rasberry tournant sous Rasbian mais il est cependant préférable d'avoir une installation "fraîche" de Rasbian Stretch (très facile à installer avec <a href="https://www.raspberrypi.org/documentation/installation/noobs.md"> NOOBS</a>).
+
 
 Pour configurer le Raspberry il faudra donc suivre ces étapes:
 
@@ -27,15 +31,20 @@ Pour configurer le Raspberry il faudra donc suivre ces étapes:
     <code>OPENCV_VER="<Le dernier numéro de version stable d'opencv>"</code>
     
     
+- Se placer dans le repository:
+
+    <code>cd /home/pi/Raspberry-Vision/</code>
+    
+    
 - Autoriser l'execution du script:
 
-    <code>chmod u+x Raspberry-Vision/Raspberry_init.bash</code>
+    <code>chmod u+x Raspberry_init.bash</code>
     
     
 - Executer le script:
 
-    <code>./Raspberry-Vision/Raspberry_init.bash</code>
+    <code>./Raspberry_init.bash</code>
     
 Le script prend quelques heures avant de se terminer et il faut parfois intervenir pour accepter l'installation de programmes.
 
-Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler et executer l'exemple, lire le <a href="Vision_example/README.md">readme</a> de celui ci.
+Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler, executer et personaliser l'exemple, lire le <a href="Vision_example/README.md">readme</a> de celui ci.
