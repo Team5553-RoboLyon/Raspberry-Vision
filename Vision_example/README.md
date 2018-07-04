@@ -15,3 +15,6 @@ Cet exemple est fait pour être compilé en ligne de commande (plutôt que dans 
   
 
 - Pour personnaliser le code de reconnaissance visuelle, remplacer les fichiers GripPipeline.cpp et GripPipeline.h situés dans <a href="full_processing/pipeline">Vision_example/full_processing/pipeline</a> par les fichiers générés automatiquement par <a href="https://wpilib.screenstepslive.com/s/4485/m/24194/l/463566-introduction-to-grip"> GRIP</a>.
+
+
+Pour fonctionner, le Raspberry Pi doit être muni d'une caméra USB et doit être relié par eternet à la borne wifi du robot pour pouvoir communiquer avec le roborio.
