@@ -1,5 +1,4 @@
-# Vision-examples
-<b>Vision Examples</b>
+# Vision-example
 
 Cet exemple est fait pour être compilé en ligne de commande (plutôt que dans un IDE comme eclipse).
 
