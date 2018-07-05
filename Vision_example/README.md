@@ -1,19 +1,23 @@
-# Vision-example
+# Vision-examples
 
-Cet exemple est fait pour être compilé en ligne de commande (plutôt que dans un IDE comme eclipse).
+Ces exemples sont fait pour être compilé en ligne de commande (plutôt que dans un IDE comme eclipse).
 
-- Pour le compiler, il faut simplement se placer dans ce dossier et entrer:
+- Pour les compiler, il faut simplement se placer dans le bon dossier et entrer:
 
     <code>make</code>
 
 
-- Pour l'exécuter, se placer dans ce dossier et entrer:
+- Pour les exécuter, se placer dans le même dossier et entrer:
 
     <code>make run</code>
   
-  
 
-- Pour personnaliser le code de reconnaissance visuelle, remplacer les fichiers GripPipeline.cpp et GripPipeline.h situés dans <a href="full_processing/pipeline">Vision_example/full_processing/pipeline</a> par les fichiers générés automatiquement par <a href="https://wpilib.screenstepslive.com/s/4485/m/24194/l/463566-introduction-to-grip"> GRIP</a>.
+Il y a 4 exemples:
 
+- <a href="cscore/">acquire_and_stream_video</a> situé dans cscore pour <b>acquérir et diffuser la video</b> d'une caméra USB
+    
+- <a href="ntcore/">nt_client</a> situé dans ntcore pour <b>communiquer avec le roborio</b> par l'intermédiaire des Network Tables
 
-Pour fonctionner, le Raspberry Pi doit être muni d'une caméra USB et doit être relié par eternet à la borne wifi du robot pour pouvoir communiquer avec le roborio.
+- <a href="video_to_disk/">video_to_disk</a> pour <b>acquérir et enregistrer la video d'une caméra USB</b> sur le Raspberry
+
+- <a href="full_processing/">full_processing</a> pour <b>acquérir, diffuser et traiter la video</b> d'une caméra USB ansi que pour <b>communiquer avec le roborio le resultat du traitement d'image</b>
