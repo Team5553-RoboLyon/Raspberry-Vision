@@ -8,7 +8,7 @@ Il y a 4 exemples:
 
 - <a href="video_to_disk/">video_to_disk</a> pour <b>acquérir et enregistrer la video d'une caméra USB</b> sur le Raspberry
 
-- <a href="full_processing/">full_processing</a> pour <b>acquérir, diffuser et traiter la video</b> d'une caméra USB ansi que pour <b>communiquer avec le roborio le resultat du traitement d'image</b>
+- <a href="full_processing/">full_processing</a> pour <b>acquérir, diffuser, enregistrer et traiter la video</b> d'une caméra USB ansi que pour <b>communiquer avec le roborio le resultat du traitement d'image</b>
 
 <br />
 <br />
