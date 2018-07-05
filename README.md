@@ -47,4 +47,4 @@ Pour configurer le Raspberry il faudra donc suivre ces étapes:
     
 Le script prend quelques heures avant de se terminer et il faut parfois intervenir pour accepter l'installation de programmes.
 
-Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler, executer et personaliser l'exemple, lire le <a href="Vision_example/README.md">readme</a> de celui ci.
+Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler, executer et personaliser les exemples, lire leur <a href="Vision_example/README.md">readme</a>.
