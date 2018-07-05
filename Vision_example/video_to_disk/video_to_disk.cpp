@@ -8,7 +8,10 @@ using namespace cv;
 
 int main() {
 	UsbCamera camera("usbcam", 0);
+	
+	//SetVideoMode (VideoMode::PixelFormat pixelFormat, int width, int height, int fps)
 	camera.SetVideoMode(VideoMode::PixelFormat::kMJPEG, 320, 240, 15);
+	
 	MjpegServer mjpegServer("httpserver", 8081);
 	mjpegServer.SetSource(camera);
 	CvSink cvsink("cvsink");
@@ -19,7 +22,7 @@ int main() {
 	cvMjpegServer.SetSource(cvsource);
 
 	Size frameSize(320, 240);
-	VideoWriter videoWriter("/data/output.avi",
+	VideoWriter videoWriter("output.avi",
 			VideoWriter::fourcc('F', 'M', 'P', '4'), 15.0, frameSize, true);
 
 	Mat frame;
