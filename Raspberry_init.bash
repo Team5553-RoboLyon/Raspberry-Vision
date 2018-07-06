@@ -465,27 +465,8 @@ then
 	fi
 
 	git clone https://github.com/wpilibsuite/VisionBuildSamples.git
-
-	#mkdir VisionBuildSamples
-	
-	cd VisionBuildSamples
-	cd Java/src/main/java
 	cd ~
-
-#Added by M. Mann on 3/11/2018 to clean from any previous install
-	rm -fr grip
-	rm -fr edu
 	
-	mkdir -p grip/pipeline/java
-	mkdir -p grip/pipeline/include
-	cd grip/pipeline/java
-	mkdir -p edu/wpi/first/wpilibj/vision
-	cd edu/wpi/first/wpilibj/vision
-	wget https://raw.githubusercontent.com/wpilibsuite/allwpilib/master/cameraserver/src/main/java/edu/wpi/first/wpilibj/vision/VisionPipeline.java
-	cd ~/grip/pipeline/include
-	wget https://raw.githubusercontent.com/wpilibsuite/allwpilib/master/cameraserver/src/main/native/include/vision/VisionPipeline.h
-
-	cd ~
 	end_step ${step}
 	((step++))
 fi
