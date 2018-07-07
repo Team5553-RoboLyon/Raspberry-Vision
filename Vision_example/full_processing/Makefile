@@ -19,10 +19,10 @@ CXXFLAGS=-I$(NTCORE_INC_DIR) -I$(WPIUTIL_INC_DIR) -I$(CSCORE_INC_DIR)  -I$(OPENC
 LDFLAGS=-L$(WPILIB_LIB_DIR) -L$(OPENCV_LIB_DIR) -lcscore -lntcore -lwpiutil -lopencv_imgproc -lopencv_core -lopencv_videoio -lrt -lpthread
 
 all: $(BINS)
-
 $(BINS): $(OBJS)
 	g++ pipeline/GripPipeline.cpp -c $(CXXFLAGS)
-	g++ $< -o $@ GripPipeline.o $(CXXFLAGS) $(LDFLAGS) 
+	g++ pipeline/Contour.cpp -c $(CXXFLAGS)
+	g++ $< -o $@ GripPipeline.o Contour.o $(CXXFLAGS) $(LDFLAGS) 
 
 .PHONY: clean run
 
