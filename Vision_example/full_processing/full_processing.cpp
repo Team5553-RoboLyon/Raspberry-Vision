@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <inttypes.h>
 
 #include <chrono>
@@ -39,10 +40,18 @@ int main() {
 
 	/* Configure Camera */
 	/* Note:  Higher resolution & framerate is possible, depending upon processing cpu usage */
-	double width = 320;
-	double height = 240;
+	double width = 800;
+	double height = 600;
 	int frames_per_sec = 15;
+	double fov = 68.5; //Angle de vue diagonal de la Microsoft Lifecam HD-3000
+	double fov_rad = fov * (M_PI/180);
+	double distance_focale = width / (2*tan(fov_rad/2));
+	
 	camera.SetVideoMode(VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
+	camera.SetBrightness (50);
+ 	camera.SetWhiteBalanceAuto ();
+ 	camera.SetExposureManual (60);
+ 	//camera.SetExposureAuto ();
 		
 	/* Start raw Video Streaming Server */
 	MjpegServer rawVideoServer("raw_video_server", 8081);
@@ -88,17 +97,23 @@ int main() {
 
 		/* Update Network Tables with timestamps & orientation data */
 		inst.GetEntry("/vmx/videoOSTimestamp").SetDouble(video_timestamp);
-
+		
 		/* Invoke processing pipeline, if one is present */
 		if (p_contour != NULL)
 		{
 		p_contour->Process(frame);
-		std::cout << "X: " << p_contour->GetX() << std::endl;
-		std::cout << "Y: " << p_contour->GetY() << std::endl;
+		double x = p_contour->GetX();
+		double y = p_contour->GetY();
+		double hauteur = p_contour->GetHeight();
+		double largeur = p_contour->GetWidth();
 		
-		cv::Point Top_left_corner(p_contour->GetX(), p_contour->GetY());
-		cv::Point Opposite_corner(p_contour->GetX()+p_contour->GetWidth(), p_contour->GetY()+p_contour->GetHeight());
-		rectangle(frame, Top_left_corner, Opposite_corner,  Scalar(255,0,0));
+		double angle_rad = atan((x- (width/2)) / distance_focale);
+		double angle = angle_rad * (180/M_PI);
+		std::cout << "X: " << x << "		" << "Y: " << p_contour->GetY() << "		" << "Angle: " << angle << std::endl;
+		
+		cv::Point Top_left_corner(x-(largeur/2), y-(hauteur/2));
+		cv::Point Opposite_corner(x+(largeur/2), y+(hauteur/2));
+		rectangle(frame, Top_left_corner, Opposite_corner,  Scalar(255,0,0), 3);
 		}
 
 
