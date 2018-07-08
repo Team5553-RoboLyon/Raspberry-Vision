@@ -24,11 +24,11 @@ using namespace grip;
 #define NULL 0
 #endif
 
-int main() {
-	/* Instantiate pipeline exported from GRIP.  If not using grip, set pipeline = NULL; */
+int main()
+{
 	Contour *p_contour = new Contour();
 	
-	const char* p_outputVideoFilePath = "output.avi"; /* Set to NULL if video writing not desired */
+	const char* p_outputVideoFilePath = "output.avi";
 
 	/* Connect NetworkTables */
 	/* Note:  actual IP address should be robot IP address */
@@ -50,8 +50,8 @@ int main() {
 	camera.SetVideoMode(VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
 	camera.SetBrightness (50);
  	camera.SetWhiteBalanceAuto ();
- 	camera.SetExposureManual (60);
- 	//camera.SetExposureAuto ();
+ 	//camera.SetExposureManual (60);
+ 	camera.SetExposureAuto ();
 		
 	/* Start raw Video Streaming Server */
 	MjpegServer rawVideoServer("raw_video_server", 8081);
@@ -77,8 +77,8 @@ int main() {
 	/* Pre-allocate a video frame */
 	Mat frame;
 
-	int count = 0;
-	while (count < 200) {
+	for (int count = 0; count < 100; count++)
+	{
 		/* Acquire new video frame */
 		std::string videoTimestampString;
 		uint64_t video_timestamp = cvsink.GrabFrame(frame);
@@ -92,37 +92,48 @@ int main() {
 		else
 		{
 			videoTimestampString = std::to_string(video_timestamp);
-			//printf("Video Timestamp:  %llu\n", video_timestamp);
 		}
 
 		/* Update Network Tables with timestamps & orientation data */
-		inst.GetEntry("/vmx/videoOSTimestamp").SetDouble(video_timestamp);
+		inst.GetEntry("/vision/videoOSTimestamp").SetDouble(video_timestamp);
 		
 		/* Invoke processing pipeline, if one is present */
 		if (p_contour != NULL)
 		{
-		p_contour->Process(frame);
-		double x = p_contour->GetX();
-		double y = p_contour->GetY();
-		double hauteur = p_contour->GetHeight();
-		double largeur = p_contour->GetWidth();
-		
-		double angle_rad = atan((x- (width/2)) / distance_focale);
-		double angle = angle_rad * (180/M_PI);
-		std::cout << "X: " << x << "		" << "Y: " << p_contour->GetY() << "		" << "Angle: " << angle << std::endl;
-		
-		cv::Point Top_left_corner(x-(largeur/2), y-(hauteur/2));
-		cv::Point Opposite_corner(x+(largeur/2), y+(hauteur/2));
-		rectangle(frame, Top_left_corner, Opposite_corner,  Scalar(255,0,0), 3);
+			p_contour->Process(frame);
+			std::vector<double> x = p_contour->GetX();
+			std::vector<double> y = p_contour->GetY();
+			std::vector<double> hauteur = p_contour->GetHeight();
+			std::vector<double> largeur = p_contour->GetWidth();
+			
+			drawContours(frame, p_contour->GetContours(), -54, Scalar(0,255,0), 1);
+			
+			for(unsigned int i = 0; i < x.size(); i++)
+			{
+				double angle_rad = atan((x[i]- (width/2)) / distance_focale);
+				double angle = angle_rad * (180/M_PI);
+				
+				std::cout << "X: " << x[i] << "		" << "Y: " << y[i] << "		" << "Angle: " << angle << std::endl;
+				
+				std::string affichage_x = "X: " + std::to_string(x[i]);
+				std::string affichage_y = "Y: " + std::to_string(y[i]);
+				std::string affichage_angle = "Angle: " + std::to_string(angle);
+				Point point_x(10,20);
+				Point point_y(10,40);
+				Point point_angle(10,60);
+				putText(frame, affichage_x, point_x, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
+				putText(frame, affichage_y, point_y, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
+				putText(frame, affichage_angle, point_angle, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
+				
+				rectangle(frame, p_contour->GetBoundingRectangle()[i],  Scalar(255,0,0), 3);
+			}
 		}
-
 
 		/* Write Frame to video */
-		if (p_videoWriter != NULL) {
+		if (p_videoWriter != NULL)
+		{
 			p_videoWriter->write(frame);
 		}
-
-		count++;
 	}
 	
 	if (p_videoWriter != NULL) {

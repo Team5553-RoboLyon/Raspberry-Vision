@@ -23,7 +23,7 @@ void GripPipeline::Process(cv::Mat& source0){
 	//Step Filter_Contours0:
 	//input
 	std::vector<std::vector<cv::Point> > filterContoursContours = findContoursOutput;
-	double filterContoursMinArea = 40.0;  // default Double
+	double filterContoursMinArea = 60.0;  // default Double
 	double filterContoursMinPerimeter = 0;  // default Double
 	double filterContoursMinWidth = 0;  // default Double
 	double filterContoursMaxWidth = 1000;  // default Double
