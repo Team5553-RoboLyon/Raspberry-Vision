@@ -245,8 +245,8 @@ fi
 if [ ${step} -eq 8 ] && [ ${step} -le ${end} ]
 then
 	start_step ${step}
-	sudo mkdir /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/server
-	sudo cp /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/client/libjvm.so 	/usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/server
+	#sudo mkdir /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/server
+	#sudo cp /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/client/libjvm.so 	/usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/server
 
 	sudo apt-get -y install eclipse eclipse-jdt eclipse-cdt
 	sudo apt-get -y install git
