@@ -36,7 +36,7 @@ int main()
 	inst.StartClient("192.168.0.113");
 
 	/* Open connection to USB Camera (video device 0 [/dev/video0]) */
-	UsbCamera camera("usbcam", 0);
+	cs::UsbCamera camera("usbcam", 0);
 
 	/* Configure Camera */
 	/* Note:  Higher resolution & framerate is possible, depending upon processing cpu usage */
@@ -54,13 +54,13 @@ int main()
  	camera.SetExposureAuto ();
 		
 	/* Start raw Video Streaming Server */
-	MjpegServer rawVideoServer("raw_video_server", 8081);
+	cs::MjpegServer rawVideoServer("raw_video_server", 8081);
 	rawVideoServer.SetSource(camera);
-	CvSink cvsink("cvsink");
+	cs::CvSink cvsink("cvsink");
 	cvsink.SetSource(camera);
 
 	/* Start processed Video server */
-	CvSource cvsource("cvsource",
+	cs::CvSource cvsource("cvsource",
 	VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
 	MjpegServer processedVideoServer("processed_video_server", 8082);
 	processedVideoServer.SetSource(cvsource);
@@ -134,6 +134,8 @@ int main()
 		{
 			p_videoWriter->write(frame);
 		}
+		
+		cvsource.PutFrame(frame);
 	}
 	
 	if (p_videoWriter != NULL) {
