@@ -70,6 +70,7 @@ int main()
 		{
 			std::cout << "Error Grabbing Video Frame:	" << cvsink.GetError() << std::endl;
 			std::this_thread::sleep_for(std::chrono::milliseconds((1000/frames_per_sec)/2));
+			continue;
 		}
 		else
 		{
