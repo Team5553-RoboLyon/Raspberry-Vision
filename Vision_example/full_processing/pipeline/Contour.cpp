@@ -1,10 +1,10 @@
 #include "Contour.h"
 
-namespace grip {
+namespace rbl {
 
 Contour::Contour()
 {
-	p_pipeline = new GripPipeline();
+	p_pipeline = new grip::GripPipeline();
 }
 
 Contour::~Contour()

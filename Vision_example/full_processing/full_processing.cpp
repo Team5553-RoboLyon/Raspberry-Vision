@@ -15,24 +15,19 @@
 
 #include "pipeline/Contour.h"
 
-using namespace cs;
-using namespace nt;
-using namespace cv;
-using namespace grip;
-
 #ifndef NULL
 #define NULL 0
 #endif
 
 int main()
 {
-	Contour *p_contour = new Contour();
+	rbl::Contour *p_contour = new rbl::Contour();
 	
 	const char* p_outputVideoFilePath = "output.avi";
 
 	/* Connect NetworkTables */
 	/* Note:  actual IP address should be robot IP address */
-	NetworkTableInstance inst = NetworkTableInstance::GetDefault();
+	nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
 	inst.StartClient("192.168.0.113");
 
 	/* Open connection to USB Camera (video device 0 [/dev/video0]) */
@@ -47,7 +42,7 @@ int main()
 	double fov_rad = fov * (M_PI/180);
 	double distance_focale = width / (2*tan(fov_rad/2));
 	
-	camera.SetVideoMode(VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
+	camera.SetVideoMode(cs::VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
 	camera.SetBrightness (50);
  	camera.SetWhiteBalanceAuto ();
  	//camera.SetExposureManual (60);
@@ -61,21 +56,21 @@ int main()
 
 	/* Start processed Video server */
 	cs::CvSource cvsource("cvsource",
-	VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
-	MjpegServer processedVideoServer("processed_video_server", 8082);
+	cs::VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
+	cs::MjpegServer processedVideoServer("processed_video_server", 8082);
 	processedVideoServer.SetSource(cvsource);
 
 	/* Create Video Writer, if enabled */
-	Size frameSize(width, height);
-	VideoWriter *p_videoWriter = NULL;
+	cv::Size frameSize(width, height);
+	cv::VideoWriter *p_videoWriter = NULL;
 	if (p_outputVideoFilePath != NULL)
 	{
-		p_videoWriter = new VideoWriter(p_outputVideoFilePath,
-		VideoWriter::fourcc('F', 'M', 'P', '4'), (double)frames_per_sec, frameSize, true);
+		p_videoWriter = new cv::VideoWriter(p_outputVideoFilePath,
+		cv::VideoWriter::fourcc('F', 'M', 'P', '4'), (double)frames_per_sec, frameSize, true);
 	}
 
 	/* Pre-allocate a video frame */
-	Mat frame;
+	cv::Mat frame;
 
 	for (int count = 0; count < 100; count++)
 	{
@@ -106,26 +101,33 @@ int main()
 			std::vector<double> hauteur = p_contour->GetHeight();
 			std::vector<double> largeur = p_contour->GetWidth();
 			
-			drawContours(frame, p_contour->GetContours(), -54, Scalar(0,255,0), 1);
+			cv::drawContours(frame, p_contour->GetContours(), -54, cv::Scalar(0,255,0), 1);
 			
-			for(unsigned int i = 0; i < x.size(); i++)
+			if(x.size() == 0)
 			{
-				double angle_rad = atan((x[i]- (width/2)) / distance_focale);
-				double angle = angle_rad * (180/M_PI);
-				
-				std::cout << "X: " << x[i] << "		" << "Y: " << y[i] << "		" << "Angle: " << angle << std::endl;
-				
-				std::string affichage_x = "X: " + std::to_string(x[i]);
-				std::string affichage_y = "Y: " + std::to_string(y[i]);
-				std::string affichage_angle = "Angle: " + std::to_string(angle);
-				Point point_x(10,20);
-				Point point_y(10,40);
-				Point point_angle(10,60);
-				putText(frame, affichage_x, point_x, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
-				putText(frame, affichage_y, point_y, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
-				putText(frame, affichage_angle, point_angle, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255,0,0));
-				
-				rectangle(frame, p_contour->GetBoundingRectangle()[i],  Scalar(255,0,0), 3);
+				std::cout << "Aucune cible détéctée" << std::endl;
+			}
+			else
+			{
+				for(unsigned int i = 0; i < x.size(); i++)
+				{
+					double angle_rad = atan((x[i]- (width/2)) / distance_focale);
+					double angle = angle_rad * (180/M_PI);
+					
+					std::cout << "X: " << x[i] << "		" << "Y: " << y[i] << "		" << "Angle: " << angle << std::endl;
+					
+					std::string affichage_x = "X: " + std::to_string(x[i]);
+					std::string affichage_y = "Y: " + std::to_string(y[i]);
+					std::string affichage_angle = "Angle: " + std::to_string(angle);
+					cv::Point point_x(10,20);
+					cv::Point point_y(10,40);
+					cv::Point point_angle(10,60);
+					cv::putText(frame, affichage_x, point_x, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+					cv::putText(frame, affichage_y, point_y, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+					cv::putText(frame, affichage_angle, point_angle, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+					
+					cv::rectangle(frame, p_contour->GetBoundingRectangle()[i], cv::Scalar(255,0,0), 3);
+				}
 			}
 		}
 
