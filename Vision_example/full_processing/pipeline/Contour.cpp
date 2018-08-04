@@ -36,6 +36,11 @@ void Contour::Process(cv::Mat& source0)
 	}
 }
 
+unsigned int Contour::GetNumberOfContours()
+{
+	return inputContours.size();
+}
+
 std::vector<cv::Rect> Contour::GetBoundingRectangle()
 {
 	return bounding_rectangle;

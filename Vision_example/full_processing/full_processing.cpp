@@ -33,12 +33,12 @@ int main()
 
 	/* Configure Camera */
 	/* Note:  Higher resolution & framerate is possible, depending upon processing cpu usage */
-	double width = 800;
-	double height = 600;
-	int frames_per_sec = 15;
-	double fov = 68.5; //Angle de vue diagonal de la Microsoft Lifecam HD-3000
-	double fov_rad = fov * (M_PI/180);
-	double distance_focale = width / (2*tan(fov_rad/2));
+	const double width = 800;
+	const double height = 600;
+	const int frames_per_sec = 15;
+	const double fov = 68.5; //Angle de vue diagonal de la Microsoft Lifecam HD-3000
+	const double fov_rad = fov * (M_PI/180);
+	const double distance_focale = width / (2*tan(fov_rad/2));
 	
 	camera.SetVideoMode(cs::VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
 	camera.SetBrightness (50);
@@ -60,68 +60,67 @@ int main()
 	/* Create Video Writer, if enabled */
 	cv::VideoWriter p_videoWriter("output.avi", cv::VideoWriter::fourcc('F', 'M', 'P', '4'), (double)frames_per_sec, cv::Size(width, height), true);
 	
-	/* Pre-allocate a video frame */
-	cv::Mat frame;
 
 	for (int count = 0; count < 100; count++)
 	{
 		/* Acquire new video frame */
-		std::string videoTimestampString;
+		cv::Mat frame;
 		uint64_t video_timestamp = cvsink.GrabFrame(frame);
 		if (video_timestamp == 0)
 		{
-			std::string error_string = cvsink.GetError();
-			printf("Error Grabbing Video Frame:  %s\n", error_string.c_str());
+			std::cout << "Error Grabbing Video Frame:	" << cvsink.GetError() << std::endl;
 			std::this_thread::sleep_for(std::chrono::milliseconds((1000/frames_per_sec)/2));
-			continue;
 		}
 		else
 		{
-			videoTimestampString = std::to_string(video_timestamp);
+			std::string videoTimestampString = std::to_string(video_timestamp);
 		}
 
 		/* Update Network Tables with timestamps & orientation data */
-		inst.GetEntry("/vision/videoOSTimestamp").SetDouble(video_timestamp);
+		//inst.GetEntry("/vision/videoOSTimestamp").SetDouble(video_timestamp);
 		
 		/* Invoke processing pipeline*/
 		p_contour.Process(frame);
+		unsigned int nombre_de_contours = p_contour.GetNumberOfContours();
 		std::vector<double> x = p_contour.GetX();
 		std::vector<double> y = p_contour.GetY();
 		std::vector<double> hauteur = p_contour.GetHeight();
 		std::vector<double> largeur = p_contour.GetWidth();
 		
+		//Draw all contours
 		cv::drawContours(frame, p_contour.GetContours(), -54, cv::Scalar(0,255,0), 1);
 		
-		if(x.size() == 0)
+		if(nombre_de_contours == 0)
 		{
 			std::cout << "Aucune cible détéctée" << std::endl;
 		}
 		else
 		{
-			for(unsigned int i = 0; i < x.size(); i++)
+			for(unsigned int i = 0; i < nombre_de_contours; i++)
 			{
+				//Calcul de l'angle de la cible par rapport au centre de la camera
 				double angle_rad = atan((x[i]- (width/2)) / distance_focale);
 				double angle = angle_rad * (180/M_PI);
 				
+				//Affichage des données en console
 				std::cout << "X: " << x[i] << "		" << "Y: " << y[i] << "		" << "Angle: " << angle << std::endl;
 				
+				//Affichage des données sur l'image
 				std::string affichage_x = "X: " + std::to_string(x[i]);
 				std::string affichage_y = "Y: " + std::to_string(y[i]);
-				std::string affichage_angle = "Angle: " + std::to_string(angle);
-				cv::Point point_x(10,20);
-				cv::Point point_y(10,40);
-				cv::Point point_angle(10,60);
-				cv::putText(frame, affichage_x, point_x, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
-				cv::putText(frame, affichage_y, point_y, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
-				cv::putText(frame, affichage_angle, point_angle, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+				std::string affichage_a = "Angle: " + std::to_string(angle);
 				
+				cv::putText(frame, affichage_x, cv::Point(10,20 + i*60), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+				cv::putText(frame, affichage_y, cv::Point(10,40 + i*60), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+				cv::putText(frame, affichage_a, cv::Point(10,60 + i*60), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
+				
+				//Affichage du rectangle qui entoure le contour sur l'image
 				cv::rectangle(frame, p_contour.GetBoundingRectangle()[i], cv::Scalar(255,0,0), 3);
 			}
 		}
 
 		/* Write Frame to video */
 		p_videoWriter.write(frame);
-		
 		cvsource.PutFrame(frame);
 	}
 

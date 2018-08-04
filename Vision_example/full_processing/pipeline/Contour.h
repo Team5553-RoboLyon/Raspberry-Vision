@@ -31,6 +31,7 @@ class Contour {
 		
 		void Process(cv::Mat& source0);
 		
+		unsigned int GetNumberOfContours();
 		std::vector<std::vector<cv::Point> > GetContours();
 		std::vector<cv::Rect> GetBoundingRectangle();
 		std::vector<double> GetX();
