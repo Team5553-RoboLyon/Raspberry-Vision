@@ -17,7 +17,7 @@ namespace rbl {
 	
 class Contour {
 	private:
-		grip::GripPipeline *p_pipeline;
+		grip::GripPipeline p_pipeline;
 	
 		std::vector<std::vector<cv::Point> > inputContours;
 		std::vector<cv::Rect> bounding_rectangle;

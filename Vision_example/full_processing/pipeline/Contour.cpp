@@ -4,19 +4,19 @@ namespace rbl {
 
 Contour::Contour()
 {
-	p_pipeline = new grip::GripPipeline();
+	
 }
 
 Contour::~Contour()
 {
-	delete p_pipeline;
+	
 }
 
 void Contour::Process(cv::Mat& source0)
 {
-	p_pipeline->Process(source0);
+	p_pipeline.Process(source0);
 	
-	inputContours = *p_pipeline->GetFilterContoursOutput();
+	inputContours = p_pipeline.GetFilterContoursOutput();
 	
 	bounding_rectangle.clear();
 	rectangle_height.clear();
