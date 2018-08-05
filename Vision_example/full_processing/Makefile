@@ -16,12 +16,12 @@ WPILIB_LIB_DIR=$(WPILIB_ROOT_DIR)/lib
 
 CXX=g++
 CXXFLAGS=-I$(NTCORE_INC_DIR) -I$(WPIUTIL_INC_DIR) -I$(CSCORE_INC_DIR)  -I$(OPENCV_INC_DIR) -O0 -g3 -Wall  -fmessage-length=0 -std=c++11 -g -rdynamic -MMD
-LDFLAGS=-L$(WPILIB_LIB_DIR) -L$(OPENCV_LIB_DIR) -lcscore -lntcore -lwpiutil -lopencv_imgproc -lopencv_core -lopencv_videoio -lrt -lpthread
+LDFLAGS=-L$(WPILIB_LIB_DIR) -L$(OPENCV_LIB_DIR) -lcscore -lntcore -lwpiutil -lopencv_imgproc -lopencv_core -lopencv_videoio -lopencv_objdetect -lrt -lpthread
 
 all: $(BINS)
 $(BINS): $(OBJS)
 	g++ pipeline/GripPipeline.cpp -c $(CXXFLAGS)
-	g++ pipeline/Contour.cpp -c $(CXXFLAGS)
+	g++ pipeline/Contour.cpp -Wno-psabi -c $(CXXFLAGS)
 	g++ $< -o $@ GripPipeline.o Contour.o $(CXXFLAGS) $(LDFLAGS) 
 
 .PHONY: clean run

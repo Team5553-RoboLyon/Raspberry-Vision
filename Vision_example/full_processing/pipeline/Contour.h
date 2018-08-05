@@ -19,8 +19,8 @@ class Contour {
 	private:
 		grip::GripPipeline p_pipeline;
 	
-		std::vector<std::vector<cv::Point> > inputContours;
-		std::vector<cv::Rect> bounding_rectangle;
+		std::vector<std::vector<cv::Point> > inputContours, outputContours;
+		std::vector<cv::Rect> bounding_rectangles;
 		cv::Point Top_left_corner;
 		
 		std::vector<double> rectangle_height, rectangle_width, centre_x, centre_y;
@@ -33,7 +33,7 @@ class Contour {
 		
 		unsigned int GetNumberOfContours();
 		std::vector<std::vector<cv::Point> > GetContours();
-		std::vector<cv::Rect> GetBoundingRectangle();
+		std::vector<cv::Rect> GetBoundingRectangles();
 		std::vector<double> GetX();
 		std::vector<double> GetY();
 		std::vector<double> GetHeight();

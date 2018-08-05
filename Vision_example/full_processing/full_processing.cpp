@@ -21,12 +21,14 @@
 
 int main()
 {
+	time_t timestamp_debut = std::time (0);
+	
 	rbl::Contour p_contour;
 
 	/* Connect NetworkTables */
 	/* Note:  actual IP address should be robot IP address */
-	nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-	inst.StartClient("192.168.0.113");
+	//nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+	//inst.StartClient("192.168.0.113");
 
 	/* Open connection to USB Camera (video device 0 [/dev/video0]) */
 	cs::UsbCamera camera("usbcam", 0);
@@ -82,6 +84,7 @@ int main()
 		
 		/* Invoke processing pipeline*/
 		p_contour.Process(frame);
+		
 		unsigned int nombre_de_contours = p_contour.GetNumberOfContours();
 		std::vector<double> x = p_contour.GetX();
 		std::vector<double> y = p_contour.GetY();
@@ -116,7 +119,7 @@ int main()
 				cv::putText(frame, affichage_a, cv::Point(10,60 + i*60), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0));
 				
 				//Affichage du rectangle qui entoure le contour sur l'image
-				cv::rectangle(frame, p_contour.GetBoundingRectangle()[i], cv::Scalar(255,0,0), 3);
+				cv::rectangle(frame, p_contour.GetBoundingRectangles()[i], cv::Scalar(255,0,0), 3);
 			}
 		}
 
@@ -124,6 +127,8 @@ int main()
 		p_videoWriter.write(frame);
 		cvsource.PutFrame(frame);
 	}
-
+	
+	time_t timestamp_fin = std::time (0);
+	std::cout << "Programme terminé au bout de " << timestamp_fin - timestamp_debut << " secondes" << std::endl;
 }
 
