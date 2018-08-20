@@ -26,10 +26,10 @@ int main()
 	
 	rbl::Contour p_contour;
 
-	/* Connect NetworkTables */
-	/* Note:  actual IP address should be robot IP address */
-	//nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-	//inst.StartClient("192.168.0.113");
+	auto inst = nt::NetworkTableInstance::GetDefault();
+	auto table = inst.GetTable("datatable");
+	auto entry = table->GetEntry("Value");
+	inst.StartClientTeam(5553);
 
 	/* Open connection to USB Camera (video device 0 [/dev/video0]) */
 	cs::UsbCamera camera("usbcam", 0);
@@ -99,6 +99,7 @@ int main()
 		if(nombre_de_contours == 0)
 		{
 			std::cout << "Aucune cible détéctée" << std::endl;
+			double angle = 0.0;
 		}
 		else
 		{
@@ -123,6 +124,11 @@ int main()
 				//Affichage du rectangle qui entoure le contour sur l'image
 				cv::rectangle(frame, p_contour.GetBoundingRectangles()[i], cv::Scalar(255,0,0), 3);
 			}
+		}
+		
+		if (entry.Exists())
+		{
+			entry.SetDouble(angle);
 		}
 
 		/* Write Frame to video */
