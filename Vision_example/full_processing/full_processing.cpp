@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/videoio/videoio.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -43,7 +44,7 @@ int main()
 	const double distance_focale = width / (2*tan(fov_rad/2));
 	
 	camera.SetVideoMode(cs::VideoMode::PixelFormat::kMJPEG, width, height, frames_per_sec);
-	camera.SetBrightness (50);
+	camera.SetBrightness (0);
  	camera.SetWhiteBalanceAuto ();
  	//camera.SetExposureManual (60);
  	camera.SetExposureAuto ();
@@ -78,6 +79,7 @@ int main()
 		{
 			std::string videoTimestampString = std::to_string(video_timestamp);
 		}
+		
 
 		/* Update Network Tables with timestamps & orientation data */
 		//inst.GetEntry("/vision/videoOSTimestamp").SetDouble(video_timestamp);
@@ -126,6 +128,7 @@ int main()
 		/* Write Frame to video */
 		p_videoWriter.write(frame);
 		cvsource.PutFrame(frame);
+		cv::imshow("output", frame);
 	}
 	
 	time_t timestamp_fin = std::time (0);

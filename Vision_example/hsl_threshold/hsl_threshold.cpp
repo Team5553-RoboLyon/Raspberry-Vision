@@ -21,12 +21,15 @@ int main(int argc, char** argv)
 		smin_trackbar_name = "Saturation Min", smax_trackbar_name = "Saturation Max",
 		lmin_trackbar_name = "Lightness Min", lmax_trackbar_name = "Lightness Max";
 
-	int hue[2];
+	int brightness;
+	int hue[2]; 
 	int lum[2];
 	int sat[2];
 	int max = 255;
-
-	namedWindow(window_name, WINDOW_AUTOSIZE);
+	
+	cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+	createTrackbar("brightness", window_name, &brightness, max);
+	
 	createTrackbar(hmin_trackbar_name, window_name, &hue[0], max);				setTrackbarPos(hmin_trackbar_name, window_name, 0);
 	createTrackbar(hmax_trackbar_name, window_name, &hue[1], max);				setTrackbarPos(hmax_trackbar_name, window_name, max);
 
@@ -39,6 +42,8 @@ int main(int argc, char** argv)
 	Mat input, output;
 	while (true)
 	{
+		cap.set(CV_CAP_PROP_BRIGHTNESS, brightness);
+		
 		cap >> input; // get a new frame from camera
 		imshow("input", input);
 
