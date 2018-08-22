@@ -97,6 +97,7 @@ int main()
 		if(nombre_de_contours == 0)
 		{
 			std::cout << "Aucune cible détéctée" << std::endl;
+			double angle = 0.0;
 		}
 		else
 		{
