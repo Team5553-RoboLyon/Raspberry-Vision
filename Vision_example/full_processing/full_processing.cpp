@@ -135,6 +135,7 @@ int main()
 		p_videoWriter.write(frame);
 		cvsource.PutFrame(frame);
 		cv::imshow("output", frame);
+		if (waitKey(30) >= 0) break;
 	}
 	
 	time_t timestamp_fin = std::time (0);
