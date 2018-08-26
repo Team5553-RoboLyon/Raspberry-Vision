@@ -20,9 +20,6 @@
 #endif
 
 void process(cv::Mat &input);
-void hslThreshold(cv::Mat &input, cv::Mat &out, double hue[], double sat[], double lum[]);
-void findContours(cv::Mat &input, std::vector<std::vector<cv::Point> > &contours, bool externalOnly = false);
-void filterContours(std::vector<std::vector<cv::Point> > &inputContours, std::vector<std::vector<cv::Point> > &output, double minArea, double minPerimeter, double minWidth, double maxWidth, double minHeight, double maxHeight, double solidity[], double maxVertexCount, double minVertexCount, double minRatio, double maxRatio);
 
 int main()
 {
@@ -71,65 +68,78 @@ int main()
 void process(cv::Mat &input)
 {
 	cv::imshow("input", input);
-	
-	cv::Mat hslThresholdOutput;
-	double Hue[] = {123.0, 152.0};
-	double Saturation[] = {185.0, 255.0};
-	double Luminance[] = {255.0, 255.0};
-	hslThreshold(input, hslThresholdOutput, Hue, Saturation, Luminance);
-	cv::imshow("output", hslThresholdOutput);
-	
-	std::vector<std::vector<cv::Point> > findContoursOutput;
-	findContours(hslThresholdOutput, findContoursOutput);
-	
-	std::vector<std::vector<cv::Point> > filterContoursOutput;
-	double filterContoursMinArea = 60.0;  // default Double
-	double filterContoursMinPerimeter = 0;  // default Double
-	double filterContoursMinWidth = 0;  // default Double
-	double filterContoursMaxWidth = 1000;  // default Double
-	double filterContoursMinHeight = 0;  // default Double
-	double filterContoursMaxHeight = 1000;  // default Double
-	double filterContoursSolidity[] = {0, 100};
-	double filterContoursMaxVertices = 1000000;  // default Double
-	double filterContoursMinVertices = 0;  // default Double
-	double filterContoursMinRatio = 0;  // default Double
-	double filterContoursMaxRatio = 1000;  // default Double
-	filterContours(findContoursOutput, filterContoursOutput, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio);
-}
 
-void hslThreshold(cv::Mat &input, cv::Mat &out, double hue[], double sat[], double lum[])
-{
-	cv::cvtColor(input, out, cv::COLOR_BGR2HLS);
-	cv::inRange(out, cv::Scalar(hue[0], lum[0], sat[0]), cv::Scalar(hue[1], lum[1], sat[1]), out);
-}
 
-void findContours(cv::Mat &input, std::vector<std::vector<cv::Point> > &contours, bool externalOnly)
-{
-	std::vector<cv::Vec4i> hierarchy;
-	contours.clear();
-	int mode = externalOnly ? cv::RETR_EXTERNAL : cv::RETR_LIST;
-	int method = cv::CHAIN_APPROX_SIMPLE;
-	cv::findContours(input, contours, hierarchy, mode, method);
-}
+	//########## Threshold ##########
+	cv::Mat thresholdOutput;
+	cv::cvtColor(input, input, cv::COLOR_BGR2HLS);
+	cv::inRange(input, cv::Scalar(0, 0, 0), cv::Scalar(255, 255, 255), thresholdOutput); //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
 
-void filterContours(std::vector<std::vector<cv::Point> > &inputContours, std::vector<std::vector<cv::Point> > &output, double minArea, double minPerimeter, double minWidth, double maxWidth, double minHeight, double maxHeight, double solidity[], double maxVertexCount, double minVertexCount, double minRatio, double maxRatio)
-{
-	std::vector<cv::Point> hull;
-	output.clear();
-	for (std::vector<cv::Point> contour: inputContours)
+	cv::imshow("threshold", thresholdOutput);
+
+
+	//########## Erode and Dilate ##########
+	cv::Mat openOutput;
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3), cv::Point(-1, -1));
+	cv::morphologyEx(thresholdOutput, openOutput, cv::MORPH_OPEN, kernel);
+
+	cv::imshow("erode and dilate", openOutput);
+
+
+	//########## Find Contours ##########
+	cv::Mat findContoursOutput = openOutput.clone();
+	std::vector<std::vector<cv::Point> > contours;
+	cv::findContours(openOutput, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+	cv::cvtColor(findContoursOutput, findContoursOutput, cv::COLOR_GRAY2RGB);
+	cv::drawContours(findContoursOutput, contours, -1, cv::Scalar(0, 0, 255), 3);
+
+	cv::imshow("finded contours", findContoursOutput);
+
+
+	//########## Approx Contours ##########
+	cv::Mat approxContoursOutput = openOutput.clone();
+	std::vector<std::vector<cv::Point> > approxContours;
+	approxContours.resize(contours.size());
+	for (size_t i = 0; i < contours.size(); i++)
 	{
-		cv::Rect bb = boundingRect(contour);
-		if (bb.width < minWidth || bb.width > maxWidth) continue;
-		if (bb.height < minHeight || bb.height > maxHeight) continue;
-		double area = cv::contourArea(contour);
-		if (area < minArea) continue;
-		if (arcLength(contour, true) < minPerimeter) continue;
-		cv::convexHull(cv::Mat(contour, true), hull);
-		double solid = 100 * area / cv::contourArea(hull);
-		if (solid < solidity[0] || solid > solidity[1]) continue;
-		if (contour.size() < minVertexCount || contour.size() > maxVertexCount)	continue;
-		double ratio = (double) bb.width / (double) bb.height;
-		if (ratio < minRatio || ratio > maxRatio) continue;
-		output.push_back(contour);
+		cv::approxPolyDP(contours[i], approxContours[i], 3, true);
 	}
+	cv::cvtColor(approxContoursOutput, approxContoursOutput, cv::COLOR_GRAY2RGB);
+	for (int i = 0; i < approxContours.size(); i++)
+	{
+		for (int n = 0; n < approxContours[i].size(); n++)
+		{
+			cv::putText(approxContoursOutput, std::to_string(n), approxContours[i][n], cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 0, 255));
+		}
+	}
+	cv::drawContours(approxContoursOutput, approxContours, -1, cv::Scalar(0, 0, 255), 3);
+
+	cv::imshow("approx contours", approxContoursOutput);
+
+
+	//########## Filter Contours ##########
+	cv::Mat filterContoursOutput = openOutput.clone();
+	std::vector<std::vector<cv::Point> > filterContours;
+	for (size_t i = 0; i < approxContours.size(); i++)
+	{
+		cv::Rect boundRect = cv::boundingRect(approxContours[i]);
+
+		double contourArea = cv::contourArea(approxContours[i]);
+		//if (contourArea > maxArea || contourArea < minArea)
+		//	continue;
+
+		double ratio = (double)boundRect.width / boundRect.height;
+		//if (contourArea > maxArea || contourArea < minArea)
+		//	continue;
+
+		if (approxContours[i].size() != 4)
+			continue;
+
+		filterContours.push_back(approxContours[i]);
+	}
+	cv::cvtColor(filterContoursOutput, filterContoursOutput, cv::COLOR_GRAY2RGB);
+	cv::drawContours(filterContoursOutput, filterContours, -1, cv::Scalar(255, 0, 0), 3);
+
+	cv::imshow("filtered contours", filterContoursOutput);
 }
+
