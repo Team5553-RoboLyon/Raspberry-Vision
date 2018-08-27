@@ -1,5 +1,6 @@
 #include <cscore.h>
 #include <ntcore.h>
+#include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/videoio/videoio.hpp>
@@ -19,11 +20,16 @@
 #define NULL 0
 #endif
 
-void process(cv::Mat &input);
+double process(cv::Mat &input);
 
 int main()
 {
 	time_t timestamp_debut = std::time (0);
+	
+	auto inst = nt::NetworkTableInstance::GetDefault();
+	auto table = inst.GetTable("datatable");
+	auto entry = table->GetEntry("Angle");
+	inst.StartClientTeam(5553);
 	
 	cs::UsbCamera camera("usbcam", 0);
 
@@ -57,7 +63,26 @@ int main()
 			std::string videoTimestampString = std::to_string(video_timestamp);
 		}
 		
-		process(frame);
+		double centerX = process(frame);
+		double angle;
+		if(centerX == -1)
+		{
+			angle = 0;
+		}
+		else
+		{
+			double angle_rad = atan((centerX- (width/2)) / distance_focale);
+			angle = angle_rad * (180/M_PI);
+		}
+		
+		if (entry.Exists())
+		{
+			entry.SetDouble(angle);
+			std::cout << "Angle envoyé" << std::endl << std::endl;
+	    }
+
+		std::cout << "Angle " << angle << std::endl << std::endl;
+		
 		if (cv::waitKey(30) >= 0) break;
 	}
 	
@@ -65,7 +90,7 @@ int main()
 	std::cout << "Programme terminé au bout de " << timestamp_fin - timestamp_debut << " secondes" << std::endl;
 }
 
-void process(cv::Mat &input)
+double process(cv::Mat &input)
 {
 	cv::imshow("input", input);
 
@@ -73,7 +98,7 @@ void process(cv::Mat &input)
 	//########## Threshold ##########
 	cv::Mat thresholdOutput;
 	cv::cvtColor(input, input, cv::COLOR_BGR2HLS);
-	cv::inRange(input, cv::Scalar(0, 0, 0), cv::Scalar(255, 255, 255), thresholdOutput); //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
+	cv::inRange(input, cv::Scalar(43, 225, 225), cv::Scalar(87, 255, 255), thresholdOutput); //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
 
 	cv::imshow("threshold", thresholdOutput);
 
@@ -93,7 +118,7 @@ void process(cv::Mat &input)
 	cv::cvtColor(findContoursOutput, findContoursOutput, cv::COLOR_GRAY2RGB);
 	cv::drawContours(findContoursOutput, contours, -1, cv::Scalar(0, 0, 255), 3);
 
-	cv::imshow("finded contours", findContoursOutput);
+	cv::imshow("find contours", findContoursOutput);
 
 
 	//########## Approx Contours ##########
@@ -102,12 +127,12 @@ void process(cv::Mat &input)
 	approxContours.resize(contours.size());
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-		cv::approxPolyDP(contours[i], approxContours[i], 3, true);
+		cv::approxPolyDP(contours[i], approxContours[i], 17, true);
 	}
 	cv::cvtColor(approxContoursOutput, approxContoursOutput, cv::COLOR_GRAY2RGB);
-	for (int i = 0; i < approxContours.size(); i++)
+	for (size_t i = 0; i < approxContours.size(); i++)
 	{
-		for (int n = 0; n < approxContours[i].size(); n++)
+		for (size_t n = 0; n < approxContours[i].size(); n++)
 		{
 			cv::putText(approxContoursOutput, std::to_string(n), approxContours[i][n], cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 0, 255));
 		}
@@ -120,26 +145,45 @@ void process(cv::Mat &input)
 	//########## Filter Contours ##########
 	cv::Mat filterContoursOutput = openOutput.clone();
 	std::vector<std::vector<cv::Point> > filterContours;
+	std::cout << "############### " << approxContours.size() << " CONTOURS DETECTES ###############" << std::endl;
 	for (size_t i = 0; i < approxContours.size(); i++)
 	{
+		//std::cout << "######## CONTOUR N " << i << " ########" << std::endl;
 		cv::Rect boundRect = cv::boundingRect(approxContours[i]);
 
 		double contourArea = cv::contourArea(approxContours[i]);
-		//if (contourArea > maxArea || contourArea < minArea)
-		//	continue;
+		//std::cout << "Area " << contourArea << std::endl;
+		if (contourArea < 10)//(contourArea > maxArea || contourArea < minArea)
+			continue;
 
 		double ratio = (double)boundRect.width / boundRect.height;
+		//std::cout << "Ratio " << ratio << std::endl;
 		//if (contourArea > maxArea || contourArea < minArea)
 		//	continue;
-
-		if (approxContours[i].size() != 4)
-			continue;
+		
+		//std::cout << "Angles " << approxContours[i].size() << std::endl;
+		//if (approxContours[i].size() != 4)
+		//	continue;
 
 		filterContours.push_back(approxContours[i]);
 	}
+	std::cout << "###### " << filterContours.size() << " contour trouve" << std::endl;
 	cv::cvtColor(filterContoursOutput, filterContoursOutput, cv::COLOR_GRAY2RGB);
 	cv::drawContours(filterContoursOutput, filterContours, -1, cv::Scalar(255, 0, 0), 3);
 
 	cv::imshow("filtered contours", filterContoursOutput);
+	
+	double centerX;
+	if(filterContours.size() != 0)
+	{
+		cv::Rect boundRect = cv::boundingRect(filterContours[0]);
+		centerX = boundRect.x + (boundRect.width / 2);
+	}
+	else
+	{
+		centerX = -1;
+	}
+	
+	return centerX;
 }
 
