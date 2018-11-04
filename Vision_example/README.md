@@ -25,5 +25,3 @@ Ces exemples sont fait pour être compilé en ligne de commande (plutôt que dan
     <code>make run</code>
 
 <br />
-
-Il est possible d'exécuter ces commande directement dans ce dossier (Vision-examples), cela compilera/exécutera alors les programmes <a href="ntcore/">nt_client</a> et <a href="cscore/">acquire_and_stream_video</a> l'un après l'autre.
