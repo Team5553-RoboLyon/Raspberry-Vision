@@ -34,12 +34,12 @@ void Contour::Process(cv::Mat& source0)
 		for(unsigned int contour_a_tester_2 = 0; contour_a_tester_2 < inputContours.size(); contour_a_tester_2++)
 		{
 			//On ne va pas comparer un contour à lui même
-			if(true);//contour_a_tester_1 != contour_a_tester_2)
+			if(true)//contour_a_tester_1 != contour_a_tester_2)
 			{
 				cv::Rect rectangle_a_tester_2 = boundingRect(inputContours[contour_a_tester_2]);
 				
 				//On teste si le premier contour est dans le second
-				if(true);/* rectangle_a_tester_1.tl().x > rectangle_a_tester_2.tl().x && 
+				if(true)/* rectangle_a_tester_1.tl().x > rectangle_a_tester_2.tl().x && 
 					rectangle_a_tester_1.tl().y > rectangle_a_tester_2.tl().y && 
 					rectangle_a_tester_1.height < rectangle_a_tester_2.height && 
 					rectangle_a_tester_1.width < rectangle_a_tester_2.width)*/
@@ -102,4 +102,4 @@ std::vector<double> Contour::GetWidth()
 {
 	return rectangle_width;
 }
-};
+}

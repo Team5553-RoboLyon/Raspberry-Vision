@@ -92,6 +92,7 @@ int main()
 		std::vector<double> y = p_contour.GetY();
 		std::vector<double> hauteur = p_contour.GetHeight();
 		std::vector<double> largeur = p_contour.GetWidth();
+		double angle;
 		
 		//Draw all contours
 		cv::drawContours(frame, p_contour.GetContours(), -54, cv::Scalar(0,255,0), 1);
@@ -99,7 +100,7 @@ int main()
 		if(nombre_de_contours == 0)
 		{
 			std::cout << "Aucune cible détéctée" << std::endl;
-			double angle = 0.0;
+			angle = 0.0;
 		}
 		else
 		{
@@ -135,7 +136,7 @@ int main()
 		p_videoWriter.write(frame);
 		cvsource.PutFrame(frame);
 		cv::imshow("output", frame);
-		if (waitKey(30) >= 0) break;
+		if (cv::waitKey(30) >= 0) break;
 	}
 	
 	time_t timestamp_fin = std::time (0);
