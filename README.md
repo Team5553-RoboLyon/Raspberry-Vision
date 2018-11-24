@@ -5,10 +5,7 @@ Il contient un script bash pour préparer le raspberry en, par exemple, installa
 <a href="https://wpilib.screenstepslive.com/s/currentCS/m/vision/l/682778-read-and-process-video-cameraserver-class">cscore</a>
 , opencv, ect... Il contient aussi des exemples complets de reconnaissance visuelle.
 
-Le contenu de ce repository provient du <a href="https://pdocs.kauailabs.com/vmx-rtk/">VMX Robotics Toolkit</a> (VMX RTK) avec quelques modifications, le script original peut être trouvé <a href="https://gist.github.com/kauailabs/53e7ff136e6e7d3f883f77576d70fbcd"> là </a> et les exemples <a href="https://github.com/kauailabs/vmx-rtk-examples"> ici</a>.
-
-
-Le script peut être executé par n'importe quel Rasberry tournant sous Rasbian mais il est cependant préférable d'avoir une installation "fraîche" de Rasbian Stretch (très facile à installer avec <a href="https://www.raspberrypi.org/documentation/installation/noobs.md"> NOOBS</a>).
+Le script et les exemples peuvent être executés par n'importe quel Rasberry tournant sous Rasbian mais il est cependant préférable d'avoir une installation "fraîche" de Rasbian Stretch (très facile à installer avec <a href="https://www.raspberrypi.org/documentation/installation/noobs.md"> NOOBS</a>).
 
 
 Pour configurer le Raspberry il faudra donc suivre ces étapes:
