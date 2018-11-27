@@ -14,7 +14,7 @@
 #include <chrono>
 #include <thread>
 
-#include "pipeline/Contour.h"
+#include "Contour.h"
 
 #ifndef NULL
 #define NULL 0

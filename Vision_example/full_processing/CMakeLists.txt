@@ -3,15 +3,19 @@ project(full_processing) # Project Name Here
 
 find_package(wpilib REQUIRED)
 
+set(SRCS_DIR
+    src/
+    )
+
 set(SRCS
-    main.cpp
-    pipeline/Contour.cpp
-    pipeline/GripPipeline.cpp
+    ${SRCS_DIR}main.cpp
+    ${SRCS_DIR}Contour.cpp
+    ${SRCS_DIR}GripPipeline.cpp
     )
     
 set(HEADERS
-    pipeline/Contour.h
-    pipeline/GripPipeline.h
+    ${SRCS_DIR}Contour.h
+    ${SRCS_DIR}GripPipeline.h
     )
 
 add_executable(full_processing.exe ${SRCS} ${HEADERS}) # exectuable name as first parameter
