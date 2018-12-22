@@ -20,10 +20,20 @@
 #define NULL 0
 #endif
 
-double process(cv::Mat &input);
+double process(cv::Mat &input, bool afficherCout = true, bool afficherImages = true);
 
-int main()
+int main(int argc, char *argv[])
 {
+	bool quietCout = false;
+	bool quietWindows = false;
+	for(int i = 0; i < argc; i++)
+	{
+		if(strcmp(argv[i], "quietc") == 0)
+			quietCout = true;
+		else if(strcmp(argv[i], "quietw") == 0)
+			quietWindows = true;
+	}
+
 	time_t timestamp_debut = std::time (0);
 	
 	auto inst = nt::NetworkTableInstance::GetDefault();
@@ -63,7 +73,7 @@ int main()
 			std::string videoTimestampString = std::to_string(video_timestamp);
 		}
 		
-		double centerX = process(frame);
+		double centerX = process(frame, !quietCout, !quietWindows);
 		double angle;
 		if(centerX == -1)
 		{
@@ -78,10 +88,12 @@ int main()
 		if (entry.Exists())
 		{
 			entry.SetDouble(angle);
-			std::cout << "Angle envoyé" << std::endl << std::endl;
+			if(!quietCout)
+				std::cout << "Angle envoyé" << std::endl << std::endl;
 	    }
 
-		std::cout << "Angle " << angle << std::endl << std::endl;
+		if(!quietCout)
+			std::cout << "Angle " << angle << std::endl << std::endl;
 		
 		if (cv::waitKey(30) >= 0) break;
 	}
@@ -90,9 +102,10 @@ int main()
 	std::cout << "Programme terminé au bout de " << timestamp_fin - timestamp_debut << " secondes" << std::endl;
 }
 
-double process(cv::Mat &input)
+double process(cv::Mat &input, bool afficherCout, bool afficherImages)
 {
-	cv::imshow("input", input);
+	if(afficherImages)
+		cv::imshow("input", input);
 
 
 	//########## Threshold ##########
@@ -100,7 +113,8 @@ double process(cv::Mat &input)
 	cv::cvtColor(input, input, cv::COLOR_BGR2HLS);
 	cv::inRange(input, cv::Scalar(43, 225, 225), cv::Scalar(87, 255, 255), thresholdOutput); //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
 
-	cv::imshow("threshold", thresholdOutput);
+	if(afficherImages)
+		cv::imshow("threshold", thresholdOutput);
 
 
 	//########## Erode and Dilate ##########
@@ -108,7 +122,8 @@ double process(cv::Mat &input)
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3), cv::Point(-1, -1));
 	cv::morphologyEx(thresholdOutput, openOutput, cv::MORPH_OPEN, kernel);
 
-	cv::imshow("erode and dilate", openOutput);
+	if(afficherImages)
+		cv::imshow("erode and dilate", openOutput);
 
 
 	//########## Find Contours ##########
@@ -118,7 +133,8 @@ double process(cv::Mat &input)
 	cv::cvtColor(findContoursOutput, findContoursOutput, cv::COLOR_GRAY2RGB);
 	cv::drawContours(findContoursOutput, contours, -1, cv::Scalar(0, 0, 255), 3);
 
-	cv::imshow("find contours", findContoursOutput);
+	if(afficherImages)
+		cv::imshow("find contours", findContoursOutput);
 
 
 	//########## Approx Contours ##########
@@ -139,13 +155,16 @@ double process(cv::Mat &input)
 	}
 	cv::drawContours(approxContoursOutput, approxContours, -1, cv::Scalar(0, 0, 255), 3);
 
-	cv::imshow("approx contours", approxContoursOutput);
+	if(afficherImages)
+		cv::imshow("approx contours", approxContoursOutput);
 
 
 	//########## Filter Contours ##########
 	cv::Mat filterContoursOutput = openOutput.clone();
 	std::vector<std::vector<cv::Point> > filterContours;
-	std::cout << "############### " << approxContours.size() << " CONTOURS DETECTES ###############" << std::endl;
+	if(afficherCout)
+		std::cout << "############### " << approxContours.size() << " CONTOURS DETECTES ###############" << std::endl;
+	
 	for (size_t i = 0; i < approxContours.size(); i++)
 	{
 		//std::cout << "######## CONTOUR N " << i << " ########" << std::endl;
@@ -167,11 +186,13 @@ double process(cv::Mat &input)
 
 		filterContours.push_back(approxContours[i]);
 	}
-	std::cout << "###### " << filterContours.size() << " contour trouve" << std::endl;
+	if(afficherCout)
+		std::cout << "###### " << filterContours.size() << " contour trouve" << std::endl;
 	cv::cvtColor(filterContoursOutput, filterContoursOutput, cv::COLOR_GRAY2RGB);
 	cv::drawContours(filterContoursOutput, filterContours, -1, cv::Scalar(255, 0, 0), 3);
 
-	cv::imshow("filtered contours", filterContoursOutput);
+	if(afficherImages)
+		cv::imshow("filtered contours", filterContoursOutput);
 	
 	double centerX;
 	if(filterContours.size() != 0)
