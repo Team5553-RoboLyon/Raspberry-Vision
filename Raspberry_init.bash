@@ -64,13 +64,11 @@ echo ===========================================================================
 ###   /usr/local/wpilib
 
 cd ~
-mkdir wpilib_cmake
-pushd wpilib_cmake
-git clone --recursive https://github.com/ThadHouse/CmakeWpilib.git .
+git clone https://github.com/wpilibsuite/allwpilib
+cd allwpilib
+mkdir buildcmake
+cd buildcmake
 
-mkdir build
-cd build
 cmake .. -DWITHOUT_JAVA=ON
 make -j5
 sudo make install
-popd
