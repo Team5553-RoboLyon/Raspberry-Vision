@@ -30,6 +30,32 @@ Ces exemples sont fait pour être compilé en ligne de commande (plutôt que dan
 
     <code>./<nom_de_l'executable></code>
     
-    exemple pour hsl_threshold : <code>./hsl_threshold.exe</code>
+    Exemple pour hsl_threshold : <code>./hsl_threshold.exe</code>
 
 <br />
+<br />
+
+Pour exécuter un des programme au démarage du Raspberry :
+
+- Editer le fichier /etc/rc.local avec les droits root :
+
+    <code>sudo nano /etc/rc.local</code>
+
+- Ajouter la commande pour exécuter le programme en laissant la ligne <code>exit 0</code> à la fin.
+    
+    Exemple du fichier /etc/rc.local pour hsl_threshold :
+    ```bash
+    #!/bin/sh -e
+    
+    #... Script déjà existant que l'on laisse (sauf exit 0) ...
+    
+    #Si le fichier existe alors on l'exécute
+    if [ -e /home/pi/Raspberry-Vision/Vision_example/cscore/acquire_and_stream_video.exe ]
+    then
+            /home/pi/Raspberry-Vision/Vision_example/cscore/acquire_and_stream_video.exe &
+    fi
+
+    exit 0
+    ```
+
+Attention : les programmes avec une interface graphique ne peuvent pas être exécutés au démarage avec cette méthode
