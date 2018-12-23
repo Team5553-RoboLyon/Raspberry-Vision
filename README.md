@@ -42,6 +42,6 @@ Pour configurer le Raspberry il faudra donc suivre ces étapes:
 
     <code>./Raspberry_init.bash</code>
     
-Le script prend pas mal de temps avant de se terminer et il faut parfois intervenir pour accepter l'installation de programmes.
+Le script prend pas mal de temps avant de se terminer.
 
 Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler, executer et personaliser les exemples, lire leur <a href="Vision_example/README.md">readme</a>.
