@@ -8,7 +8,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 
-echo  
+echo
 echo =======================================================================================
 echo ============================= Required Packages for Opencv ============================
 echo =======================================================================================
@@ -19,7 +19,7 @@ sudo apt-get -y install libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-
 sudo apt-get -y install libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev
 
 
-echo  
+echo
 echo =======================================================================================
 echo ============================== OpenCV - build from source =============================
 echo =======================================================================================
@@ -46,7 +46,7 @@ cmake -DENABLE_NEON=ON \
 	-DBUILD_TESTS=OFF \
 	-DBUILD_PERF_TESTS=OFF \
 	..
-	  
+
 make -j5
 sudo make install
 
@@ -54,7 +54,7 @@ cd ~
 rm -f ${OPENCV_VER}.zip
 
 
-echo  
+echo
 echo =======================================================================================
 echo ================= Cmake wpilib : Includes cscore, ntcore, and wpiutil =================
 echo =======================================================================================
