@@ -35,4 +35,59 @@ Pour configurer le Raspberry il faudra donc suivre ces étapes:
 Le script prend pas mal de temps avant de se terminer.
 
 ## Exemples
-Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler et executer les exemples, lire leur [readme](Vision_example/README.md).
+Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler et executer les exemples, lire leur [README](Vision_example/README.md).
+
+## Configuration pour la compétition
+
+### Exécuter un programme au démarrage
+
+Pour exécuter un des programme au démarrage du Raspberry :
+
+- Editer le fichier /etc/rc.local avec les droits root :
+
+    `sudo nano /etc/rc.local`
+
+- Ajouter la commande pour exécuter le programme en laissant la ligne `exit 0` à la fin.
+    
+    Exemple du fichier /etc/rc.local pour full_processing :
+    ```sh
+    #!/bin/sh -e
+    
+    #... Script déjà existant que l'on laisse (sauf exit 0) ...
+    
+    #Si le fichier existe alors on l'exécute
+    if [ -e /home/pi/Raspberry-Vision/Vision_example/full_processing/full_processing.exe ]
+    then
+            /home/pi/Raspberry-Vision/Vision_example/full_processing/full_processing.exe &
+    fi
+
+    exit 0
+    ```
+
+- `ctrl + o` puis `Entrer` pour sauvegarder, `ctrl + x` pour fermer
+
+:warning: **Attention** : les programmes avec une interface graphique ne peuvent pas être exécutés au démarrage avec cette méthode
+
+### Desactiver le wifi et bluetooth
+
+- Editer le fichier /boot/config.txt : `sudo nano /boot/config.txt`
+
+- Ajouter ces lignes à la fin du fichier :
+    ```
+    # Uncomment this to disbale Wifi
+    dtoverlay=pi3-disable-wifi
+
+    # Uncomment this to disable Bluetooth
+    dtoverlay=pi3-disable-bt
+    ```
+- `ctrl + o` puis `Entrer` pour sauvegarder, `ctrl + x` pour fermer
+
+### Desactiver l'affichage graphique
+
+- Entrer dans la console : `sudo raspi-config`
+
+- Aller à `Boot Options` puis à `Desktop / CLI`
+
+- Sélectionner l'option `Console Autologin`
+
+- Aller à `Finish` puis redémarrer le Raspberry
