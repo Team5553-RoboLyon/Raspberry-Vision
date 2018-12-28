@@ -2,12 +2,12 @@
 
 Cet exemple permet d'acquérir la vidéo issue d'une caméra USB branchée au Raspberry puis de la diffuser par http.
 
-On peut facilement lire le flux video dans un navigateur web avec comme url : <code>http://IP_du_Raspberry:port</code>.
+On peut facilement lire le flux video dans un navigateur web avec comme url : `http://IP_du_Raspberry:port`.
 
-- Pour connaître l'IP du Raspberry, entrer <code>ifconfig</code> dans le terminal. Si on cherche à acquérir le flux sur le raspberry qui l'émet on peut utiliser <code>localhost</code> ou <code>127.0.0.1</code> comme IP
+- Pour connaître l'IP du Raspberry, entrer `ifconfig` dans le terminal. Si on cherche à acquérir le flux sur le raspberry qui l'émet on peut utiliser `localhost` ou `127.0.0.1` comme IP
 
 - Le port est celui spécifié dans le code, ici 8081.
 
-Exemple: <code>http://192.168.0.46:8081/</code>
+Exemple: `http://192.168.0.46:8081/`
 
-Il utilise la librairie <a href="https://wpilib.screenstepslive.com/s/currentCS/m/vision/l/682778-read-and-process-video-cameraserver-class">CameraServer</a> pour capturer et diffuser la vidéo.
+Il utilise la librairie [CameraServer](https://wpilib.screenstepslive.com/s/currentCS/m/vision/l/682778-read-and-process-video-cameraserver-class) pour capturer et diffuser la vidéo.

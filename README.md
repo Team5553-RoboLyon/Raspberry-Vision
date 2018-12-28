@@ -7,7 +7,7 @@ et opencv nécéssaires pour la reconnaissance visuelle. Il contient aussi des e
 
 Le script et les exemples peuvent être executés par n'importe quel Rasberry tournant sous Rasbian mais il est cependant préférable d'avoir une installation "fraîche" de Rasbian Stretch (très facile à installer avec [NOOBS](https://www.raspberrypi.org/documentation/installation/noobs.md)).
 
-### Configuration du Raspberry
+## Configuration du Raspberry
 Pour configurer le Raspberry il faudra donc suivre ces étapes:
 
 
@@ -34,5 +34,5 @@ Pour configurer le Raspberry il faudra donc suivre ces étapes:
     
 Le script prend pas mal de temps avant de se terminer.
 
-### Exemples
+## Exemples
 Après cela, il sera possible de faire de la reconnaissance visuelle. Pour compiler et executer les exemples, lire leur [readme](Vision_example/README.md).

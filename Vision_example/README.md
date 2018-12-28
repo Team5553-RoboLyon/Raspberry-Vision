@@ -1,19 +1,19 @@
 # Vision-examples
 
-Il y a 4 exemples:
+## Description des principaux exemples
 
-- <a href="cscore/">acquire_and_stream_video</a> situé dans cscore/ pour <b>acquérir et diffuser la video</b> d'une caméra USB
+- [acquire_and_stream_video](cscore/) situé dans cscore/ pour **acquérir et diffuser la video** d'une caméra USB
     
-- <a href="ntcore/">nt_client</a> situé dans ntcore/ pour <b>communiquer avec le roborio</b> par l'intermédiaire des Network Tables
+- [nt_client](ntcore/) situé dans ntcore/ pour **communiquer avec le roborio** par l'intermédiaire des Network Tables
 
-- <a href="video_to_disk/">video_to_disk</a> pour <b>acquérir et enregistrer la video d'une caméra USB</b> sur le Raspberry
+- [video_to_disk](video_to_disk/) pour **acquérir et enregistrer la video d'une caméra USB** sur le Raspberry
 
-- <a href="hsl_threshold/">hsl_threshold</a> pour <b>acquérir et filtrer </b> la video d'une caméra USB
+- [hsl_threshold](hsl_threshold/) pour **acquérir et filtrer** la video d'une caméra USB
 
-- <a href="full_processing/">full_processing</a> pour <b>acquérir, diffuser, enregistrer et traiter la video</b> d'une caméra USB ansi que pour <b>communiquer avec le roborio le resultat du traitement d'image</b>
+- [full_processing](full_processing/) pour **acquérir, diffuser, enregistrer et traiter la video** d'une caméra USB ansi que pour **communiquer avec le roborio le resultat du traitement d'image**
 
-<br />
-<br />
+
+## Compiler et éxécuter les exemples
 
 Ces exemples sont fait pour être compilé en ligne de commande (plutôt que dans un IDE comme eclipse ou vscode).
 
@@ -32,8 +32,8 @@ Ces exemples sont fait pour être compilé en ligne de commande (plutôt que dan
     
     Exemple pour hsl_threshold : <code>./hsl_threshold.exe</code>
 
-<br />
-<br />
+
+## Exécuter les exemples au démarage
 
 Pour exécuter un des programme au démarage du Raspberry :
 
@@ -43,19 +43,19 @@ Pour exécuter un des programme au démarage du Raspberry :
 
 - Ajouter la commande pour exécuter le programme en laissant la ligne <code>exit 0</code> à la fin.
     
-    Exemple du fichier /etc/rc.local pour hsl_threshold :
-    ```bash
+    Exemple du fichier /etc/rc.local pour full_processing :
+    ```sh
     #!/bin/sh -e
     
     #... Script déjà existant que l'on laisse (sauf exit 0) ...
     
     #Si le fichier existe alors on l'exécute
-    if [ -e /home/pi/Raspberry-Vision/Vision_example/cscore/acquire_and_stream_video.exe ]
+    if [ -e /home/pi/Raspberry-Vision/Vision_example/full_processing/full_processing.exe ]
     then
-            /home/pi/Raspberry-Vision/Vision_example/cscore/acquire_and_stream_video.exe &
+            /home/pi/Raspberry-Vision/Vision_example/full_processing/full_processing.exe &
     fi
 
     exit 0
     ```
 
-Attention : les programmes avec une interface graphique ne peuvent pas être exécutés au démarage avec cette méthode
+:warning: **Attention** : les programmes avec une interface graphique ne peuvent pas être exécutés au démarage avec cette méthode
