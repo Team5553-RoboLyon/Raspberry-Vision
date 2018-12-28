@@ -82,7 +82,7 @@ Pour exécuter un des programme au démarrage du Raspberry :
     ```
 - `ctrl + o` puis `Entrer` pour sauvegarder, `ctrl + x` pour fermer
 
-### Desactiver l'affichage graphique
+### Desactiver l'interface graphique
 
 - Entrer dans la console : `sudo raspi-config`
 
@@ -91,3 +91,5 @@ Pour exécuter un des programme au démarrage du Raspberry :
 - Sélectionner l'option `Console Autologin`
 
 - Aller à `Finish` puis redémarrer le Raspberry
+
+Pour lancer l'interface graphique après avoir démarré en mode console, entrer `startx`. 
