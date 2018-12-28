@@ -10,13 +10,17 @@ sudo apt-get -y upgrade
 
 echo
 echo =======================================================================================
-echo ============================= Required Packages for Opencv ============================
+echo ================================== Required Packages ==================================
 echo =======================================================================================
 
+# Required Packages for Opencv
 sudo apt-get -y install build-essential
 sudo apt-get -y install git cmake pkg-config
 sudo apt-get -y install libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev
 sudo apt-get -y install libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev
+
+# Samba pour pouvoir accéder au nom d'hôte du Raspberry sous Windows
+sudo apt-get -y install samba
 
 
 echo
