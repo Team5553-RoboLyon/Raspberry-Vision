@@ -104,86 +104,85 @@ void CaptureFrame()
 
 void ProcessFrame()
 {
+    while(!cameraReady){}
+    
     for(int i = 0; i < 1000; i++)
     {
-        if(cameraReady)
+        inputMutex.lock();
+        //########## BGR TO HLS ##########
+        cv::cvtColor(input, hsl, cv::COLOR_BGR2HLS);
+        inputMutex.unlock();
+
+
+        //########## Threshold ##########
+        //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
+        cv::inRange(hsl, cv::Scalar(43, 225, 225), cv::Scalar(87, 255, 255), thresholdOutput);
+
+
+        //########## Erode and Dilate ##########
+        cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3), cv::Point(-1, -1));
+        cv::morphologyEx(thresholdOutput, openOutput, cv::MORPH_OPEN, kernel);
+
+
+        //########## Find Contours ##########
+        contours.clear();
+        cv::findContours(openOutput, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        std::cout << "############### " << contours.size() << " CONTOURS DETECTES ###############" << std::endl;
+
+
+        //########## Approx Contours ##########
+        approxContours.clear();
+        approxContours.resize(contours.size());
+        for (size_t i = 0; i < contours.size(); i++)
         {
-            inputMutex.lock();
-            //########## BGR TO HLS ##########
-            cv::cvtColor(input, hsl, cv::COLOR_BGR2HLS);
-            inputMutex.unlock();
+            cv::approxPolyDP(contours[i], approxContours[i], 17, true);
+        }
 
 
-            //########## Threshold ##########
-            //cv::inRange(input, Scalar(lowH, lowL, lowS), Scalar(highH, highL, highS), output);
-            cv::inRange(hsl, cv::Scalar(43, 225, 225), cv::Scalar(87, 255, 255), thresholdOutput);
+        //########## Filter Contours ##########
+        filterContours.clear();
+        for (size_t i = 0; i < approxContours.size(); i++)
+        {
+            //std::cout << "######## CONTOUR N " << i << " ########" << std::endl;
+            cv::Rect boundRect = cv::boundingRect(approxContours[i]);
 
+            double contourArea = cv::contourArea(approxContours[i]);
+            //std::cout << "Area " << contourArea << std::endl;
+            if (contourArea < 10)//(contourArea > maxArea || contourArea < minArea)
+                continue;
 
-            //########## Erode and Dilate ##########
-            cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3), cv::Point(-1, -1));
-            cv::morphologyEx(thresholdOutput, openOutput, cv::MORPH_OPEN, kernel);
-
-
-            //########## Find Contours ##########
-            contours.clear();
-            cv::findContours(openOutput, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-            std::cout << "############### " << contours.size() << " CONTOURS DETECTES ###############" << std::endl;
-
-
-            //########## Approx Contours ##########
-            approxContours.clear();
-            approxContours.resize(contours.size());
-            for (size_t i = 0; i < contours.size(); i++)
-            {
-                cv::approxPolyDP(contours[i], approxContours[i], 17, true);
-            }
-
-
-            //########## Filter Contours ##########
-            filterContours.clear();
-            for (size_t i = 0; i < approxContours.size(); i++)
-            {
-                //std::cout << "######## CONTOUR N " << i << " ########" << std::endl;
-                cv::Rect boundRect = cv::boundingRect(approxContours[i]);
-
-                double contourArea = cv::contourArea(approxContours[i]);
-                //std::cout << "Area " << contourArea << std::endl;
-                if (contourArea < 10)//(contourArea > maxArea || contourArea < minArea)
-                    continue;
-
-                double ratio = (double)boundRect.width / boundRect.height;
-                //std::cout << "Ratio " << ratio << std::endl;
-                //if (contourArea > maxArea || contourArea < minArea)
-                //	continue;
-                
-                //std::cout << "Angles " << approxContours[i].size() << std::endl;
-                //if (approxContours[i].size() != 4)
-                //	continue;
-
-                filterContours.push_back(approxContours[i]);
-            }
-            std::cout << "###### " << filterContours.size() << " contour trouve" << std::endl;
-
+            double ratio = (double)boundRect.width / boundRect.height;
+            //std::cout << "Ratio " << ratio << std::endl;
+            //if (contourArea > maxArea || contourArea < minArea)
+            //	continue;
             
-            double angle;
-            if(filterContours.size() != 0)
-            {
-                cv::Rect boundRect = cv::boundingRect(filterContours[0]);
-                double centerX = boundRect.x + (boundRect.width / 2);
-                double angle_rad = atan((centerX- (width/2)) / distance_focale);
-                angle = angle_rad * (180/M_PI);
-            }
-            else
-            {
-                angle = 0;
-            }
-            std::cout << "Angle " << angle << std::endl << std::endl;
-            
-            if (entry.Exists())
-            {
-                entry.SetDouble(angle);
-                std::cout << "Angle envoyé" << std::endl << std::endl;
-            }
+            //std::cout << "Angles " << approxContours[i].size() << std::endl;
+            //if (approxContours[i].size() != 4)
+            //	continue;
+
+            filterContours.push_back(approxContours[i]);
+        }
+        std::cout << "###### " << filterContours.size() << " contour trouve" << std::endl;
+
+        
+        double angle;
+        if(filterContours.size() != 0)
+        {
+            cv::Rect boundRect = cv::boundingRect(filterContours[0]);
+            double centerX = boundRect.x + (boundRect.width / 2);
+            double angle_rad = atan((centerX- (width/2)) / distance_focale);
+            angle = angle_rad * (180/M_PI);
+        }
+        else
+        {
+            angle = 0;
+        }
+        std::cout << "Angle " << angle << std::endl << std::endl;
+        
+        if (entry.Exists())
+        {
+            entry.SetDouble(angle);
+            std::cout << "Angle envoyé" << std::endl << std::endl;
         }
     }
 }
